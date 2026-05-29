@@ -40,10 +40,13 @@
       opacity: 0.85;
     }
 
-    canvas {
-      margin: 20px auto;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
+canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 20px auto;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
   </style>
 </head>
   
@@ -81,13 +84,14 @@
     pageRendering = true;
 
     pdfDoc.getPage(num).then(function(page) {
-      const desiredWidth = window.innerWidth * 0.95;
 
-      const unscaledViewport = page.getViewport({ scale: 1 });
+    const containerWidth = Math.min(window.innerWidth, 900);
 
-      scale = desiredWidth / unscaledViewport.width;
+    const unscaledViewport = page.getViewport({ scale: 1 });
 
-      const viewport = page.getViewport({ scale: scale });
+    const scale = (containerWidth - 20) / unscaledViewport.width;
+
+    const viewport = page.getViewport({ scale });
 
       canvas.height = viewport.height;
       canvas.width = viewport.width;
