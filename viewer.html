@@ -52,113 +52,19 @@ canvas {
   
 <body>
 
-<div id="toolbar">
-  <button onclick="prevPage()">◀ Previous</button>
-
-  <span>
-    Page <span id="page_num"></span> / <span id="page_count"></span>
-  </span>
-
-  <button onclick="nextPage()">Next ▶</button>
-
-</div>
-
-<canvas id="pdf-render"></canvas>
-
-<script>
-  // Replace with your PDF URL
-  const url = './Book_Huna.pdf';
-
-  let pdfDoc = null,
-      pageNum = 1,
-      pageRendering = false,
-      pageNumPending = null,
-      scale = 1.4,
-      canvas = document.getElementById('pdf-render'),
-      ctx = canvas.getContext('2d');
-
-  pdfjsLib.GlobalWorkerOptions.workerSrc =
-    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-
-  function renderPage(num) {
-    pageRendering = true;
-
-    pdfDoc.getPage(num).then(function(page) {
-
-    const containerWidth = Math.min(window.innerWidth, 900);
-
-    const unscaledViewport = page.getViewport({ scale: 1 });
-
-    const scale = (containerWidth - 20) / unscaledViewport.width;
-
-    const viewport = page.getViewport({ scale });
-
-      canvas.height = viewport.height;
-      canvas.width = viewport.width;
-
-      const renderContext = {
-        canvasContext: ctx,
-        viewport: viewport
-      };
-
-      const renderTask = page.render(renderContext);
-
-      renderTask.promise.then(function() {
-        pageRendering = false;
-
-        if (pageNumPending !== null) {
-          renderPage(pageNumPending);
-          pageNumPending = null;
-        }
-      });
-    });
-
-    document.getElementById('page_num').textContent = num;
-  }
-
-  function queueRenderPage(num) {
-    if (pageRendering) {
-      pageNumPending = num;
-    } else {
-      renderPage(num);
-    }
-  }
-
-  function prevPage() {
-    if (pageNum <= 1) {
-      return;
-    }
-    pageNum--;
-    queueRenderPage(pageNum);
-  }
-
-  function nextPage() {
-    if (pageNum >= pdfDoc.numPages) {
-      return;
-    }
-    pageNum++;
-    queueRenderPage(pageNum);
-  }
-
-  function zoomIn() {
-    scale += 0.2;
-    queueRenderPage(pageNum);
-  }
-
-  function zoomOut() {
-    if (scale <= 0.4) return;
-    scale -= 0.2;
-    queueRenderPage(pageNum);
-  }
-
-  pdfjsLib.getDocument(url).promise.then(function(pdfDoc_) {
-    pdfDoc = pdfDoc_;
-
-    document.getElementById('page_count').textContent = pdfDoc.numPages;
-
-    renderPage(pageNum);
-  });
-</script>
+<iframe
+  src="./Book_Huna.pdf"
+  width="100%"
+  height="100%"
+  style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  ">
+</iframe>
 
 </body>
 </html>
